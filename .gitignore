@@ -1,0 +1,5 @@
+.terraform
+.idea
+*.tfstate*
+*.lock*
+env.sh
