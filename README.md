@@ -5,7 +5,7 @@ LLM models will run on AWS on 4x L4 GPUs.
 
 The TL;DR is that:
 - On 4xL4 GPUs all models up to 12b will run very fast, above the speed is lacking
-- On 8xL4 GPUs 
+- On 8xL4 GPUs all models up to 70b will run acceptable, but models above 70b will run eg. 450b, but it is unusable
 
 ## Environment vars
 
@@ -145,12 +145,187 @@ $ nvidia-smi
 |    3   N/A  N/A     13852      C   ...unners/cuda_v11/ollama_llama_server    18918MiB |
 +---------------------------------------------------------------------------------------+
 
+
 # run qwen:72b on 4GPUs
 # 40GB download
 ollama run qwen2:72b
 $ nvidia-smi
 
+#### 8 L4 GPU
+# mistral large runs better on 8 L4 GPUs and it is actually usable
+ollama run mistral-large
+$ nvidia-smi
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.183.01             Driver Version: 535.183.01   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA L4                      On  | 00000000:9F:00.0 Off |                    0 |
+| N/A   47C    P0              30W /  72W |  11640MiB / 23034MiB |      2%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   1  NVIDIA L4                      On  | 00000000:A1:00.0 Off |                    0 |
+| N/A   44C    P0              38W /  72W |  10866MiB / 23034MiB |     18%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   2  NVIDIA L4                      On  | 00000000:A3:00.0 Off |                    0 |
+| N/A   49C    P0              38W /  72W |  10866MiB / 23034MiB |     18%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   3  NVIDIA L4                      On  | 00000000:A5:00.0 Off |                    0 |
+| N/A   45C    P0              36W /  72W |  10866MiB / 23034MiB |     17%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   4  NVIDIA L4                      On  | 00000000:AE:00.0 Off |                    0 |
+| N/A   48C    P0              37W /  72W |  10866MiB / 23034MiB |     18%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   5  NVIDIA L4                      On  | 00000000:B0:00.0 Off |                    0 |
+| N/A   47C    P0              36W /  72W |  10866MiB / 23034MiB |     15%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   6  NVIDIA L4                      On  | 00000000:B2:00.0 Off |                    0 |
+| N/A   45C    P0              34W /  72W |  10866MiB / 23034MiB |     13%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   7  NVIDIA L4                      On  | 00000000:B4:00.0 Off |                    0 |
+| N/A   46C    P0              31W /  72W |  10406MiB / 23034MiB |      5%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
 
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    11632MiB |
+|    1   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10858MiB |
+|    2   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10858MiB |
+|    3   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10858MiB |
+|    4   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10858MiB |
+|    5   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10858MiB |
+|    6   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10858MiB |
+|    7   N/A  N/A     28647      C   ...unners/cuda_v11/ollama_llama_server    10398MiB |
++---------------------------------------------------------------------------------------+
+
+
+## Llama3.1:70b runs fine on 8x L4 = 56GB of memory in use
+$ nvidia-smi
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.183.01             Driver Version: 535.183.01   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA L4                      On  | 00000000:9F:00.0 Off |                    0 |
+| N/A   42C    P0              33W /  72W |   7172MiB / 23034MiB |     11%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   1  NVIDIA L4                      On  | 00000000:A1:00.0 Off |                    0 |
+| N/A   39C    P0              32W /  72W |   6682MiB / 23034MiB |     13%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   2  NVIDIA L4                      On  | 00000000:A3:00.0 Off |                    0 |
+| N/A   43C    P0              32W /  72W |   6682MiB / 23034MiB |     14%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   3  NVIDIA L4                      On  | 00000000:A5:00.0 Off |                    0 |
+| N/A   40C    P0              34W /  72W |   6682MiB / 23034MiB |     17%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   4  NVIDIA L4                      On  | 00000000:AE:00.0 Off |                    0 |
+| N/A   42C    P0              36W /  72W |   6682MiB / 23034MiB |     10%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   5  NVIDIA L4                      On  | 00000000:B0:00.0 Off |                    0 |
+| N/A   40C    P0              34W /  72W |   6682MiB / 23034MiB |     10%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   6  NVIDIA L4                      On  | 00000000:B2:00.0 Off |                    0 |
+| N/A   40C    P0              34W /  72W |   6682MiB / 23034MiB |     18%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   7  NVIDIA L4                      On  | 00000000:B4:00.0 Off |                    0 |
+| N/A   40C    P0              33W /  72W |   7012MiB / 23034MiB |     15%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     7164MiB |
+|    1   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     6674MiB |
+|    2   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     6674MiB |
+|    3   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     6674MiB |
+|    4   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     6674MiB |
+|    5   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     6674MiB |
+|    6   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     6674MiB |
+|    7   N/A  N/A     40327      C   ...unners/cuda_v11/ollama_llama_server     7004MiB |
++---------------------------------------------------------------------------------------+
+
+# llama3.1:450b, 231GB download, on 8x L4 uses 152GB of memory in use
+# performance is very very slow, absolutely unusable
+# ollama run llama3.1:450b
+$ nvidia-smi
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.183.01             Driver Version: 535.183.01   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA L4                      On  | 00000000:9F:00.0 Off |                    0 |
+| N/A   48C    P0              30W /  72W |  19928MiB / 23034MiB |      0%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   1  NVIDIA L4                      On  | 00000000:A1:00.0 Off |                    0 |
+| N/A   45C    P0              39W /  72W |  18646MiB / 23034MiB |      0%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   2  NVIDIA L4                      On  | 00000000:A3:00.0 Off |                    0 |
+| N/A   50C    P0              39W /  72W |  18646MiB / 23034MiB |     14%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   3  NVIDIA L4                      On  | 00000000:A5:00.0 Off |                    0 |
+| N/A   47C    P0              39W /  72W |  18646MiB / 23034MiB |     36%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   4  NVIDIA L4                      On  | 00000000:AE:00.0 Off |                    0 |
+| N/A   49C    P0              33W /  72W |  18646MiB / 23034MiB |     37%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   5  NVIDIA L4                      On  | 00000000:B0:00.0 Off |                    0 |
+| N/A   47C    P0              37W /  72W |  18646MiB / 23034MiB |     37%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   6  NVIDIA L4                      On  | 00000000:B2:00.0 Off |                    0 |
+| N/A   47C    P0              41W /  72W |  18646MiB / 23034MiB |     37%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+|   7  NVIDIA L4                      On  | 00000000:B4:00.0 Off |                    0 |
+| N/A   48C    P0              38W /  72W |  18646MiB / 23034MiB |      6%      Default |
+|                                         |                      |                  N/A |
++-----------------------------------------+----------------------+----------------------+
+
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    19918MiB |
+|    1   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
+|    2   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
+|    3   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
+|    4   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
+|    5   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
+|    6   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
+|    7   N/A  N/A     48653      C   ...unners/cuda_v11/ollama_llama_server    18636MiB |
++---------------------------------------------------------------------------------------+
 ```
 
 ## Remote access
